@@ -228,7 +228,7 @@ final class Compiler {
         guts.cflags = cflags;
         guts.info = info;
         guts.nsub = nsub;
-        guts.tree = tree;
+        guts.tree = new RuntimeSubexpression(tree);
         guts.ntree = ntree;
         if (0 != (cflags & Flags.REG_ICASE)) {
             guts.compare = new Comparer(true);

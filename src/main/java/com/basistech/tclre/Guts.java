@@ -19,6 +19,8 @@ package com.basistech.tclre;
 
 import java.util.List;
 import com.google.common.collect.Lists;
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 
 /**
  * Data structures derived from regguts.h.
@@ -28,7 +30,7 @@ class Guts {
     int cflags;     /* copy of compile flags */
     long info;      /* copy of re_info */
     int nsub;       /* copy of re_nsub */
-    Subre tree;
+    RuntimeSubexpression tree;
     Cnfa search;    /* for fast preliminary search */
     int ntree;
     ColorMap cm;
@@ -45,9 +47,9 @@ class Guts {
             lookaheadConstraintMachines = Lists.newArrayList();
             for (Subre subre : lacons) {
                 if (subre == null) {
-                    lookaheadConstraintMachines.add(new RuntimeSubexpression(0, null));
+                    lookaheadConstraintMachines.add(new RuntimeSubexpression());
                 } else {
-                    lookaheadConstraintMachines.add(new RuntimeSubexpression(subre.subno, subre.cnfa));
+                    lookaheadConstraintMachines.add(new RuntimeSubexpression(subre));
                 }
             }
         }

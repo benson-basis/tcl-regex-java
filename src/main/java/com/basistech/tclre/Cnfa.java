@@ -43,25 +43,6 @@ class Cnfa {
         this.states = states;
     }
 
-    void dump() {
-        System.out.format("nstates %d\nncolors %d\nflags %x\npre %d\npost %d\nbos [%d, %d]\neos [%d %d]\n",
-            states.length,
-            ncolors,
-            flags,
-            pre,
-            post,
-            bos[0],
-            bos[1],
-            eos[0],
-            eos[1]);
-        System.out.format("    color state\n");
-        for (int x = 0; x < arcs.length; x++) {
-            long arc = arcs[x];
-            System.out.format("%03d %5d %d\n", x, carcColor(arc), carcTarget(arc));
-        }
-        System.out.println();
-    }
-
     static long packCarc(short color, int targetState) {
         return ((long)color << 32) | targetState;
     }
@@ -73,8 +54,4 @@ class Cnfa {
     static int carcTarget(long packed) {
         return (int)packed;
     }
-
-
-
-
 }
