@@ -332,8 +332,8 @@ class Runtime {
         int stop = shorter ? end : begin;
 
         assert t.op == '.';
-        assert t.left != null && t.left.cnfa.nstates > 0;
-        assert t.right != null && t.right.cnfa.nstates > 0;
+        assert t.left != null && t.left.cnfa.states.length > 0;
+        assert t.right != null && t.right.cnfa.states.length > 0;
 
         d = new Dfa(this, t.left.cnfa);
         d2 = new Dfa(this, t.right.cnfa);
@@ -383,7 +383,7 @@ class Runtime {
         assert t.op == '|';
 
         for (; t != null; t = t.right) {
-            assert t.left != null && t.left.cnfa.nstates > 0;
+            assert t.left != null && t.left.cnfa.states.length > 0;
             d = new Dfa(this, t.left.cnfa);
             if (d.longest(begin, end, null) == end) {
                 return dissect(t.left, begin, end);
@@ -444,8 +444,8 @@ class Runtime {
         int mid;
 
         assert t.op == '.';
-        assert t.left != null && t.left.cnfa.nstates > 0;
-        assert t.right != null && t.right.cnfa.nstates > 0;
+        assert t.left != null && t.left.cnfa.states.length > 0;
+        assert t.right != null && t.right.cnfa.states.length > 0;
 
         if (0 != (t.left.flags & Subre.SHORTER)) {      /* reverse scan */
             return crevdissect(t, begin, end);
@@ -519,8 +519,8 @@ class Runtime {
         int mid;
 
         assert t.op == '.';
-        assert t.left != null && t.left.cnfa.nstates > 0;
-        assert t.right != null && t.right.cnfa.nstates > 0;
+        assert t.left != null && t.left.cnfa.states.length > 0;
+        assert t.right != null && t.right.cnfa.states.length > 0;
         assert 0 != (t.left.flags & Subre.SHORTER);
 
     /* concatenation -- need to split the substring between parts */

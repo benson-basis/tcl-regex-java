@@ -52,7 +52,7 @@ class Dfa {
          * to the complexity of the machine, not to the input.
          */
         stateSets = new Object2ObjectOpenHashMap<BitSet, StateSet>();
-        nstates = cnfa.nstates;
+        nstates = cnfa.states.length;
         ncolors = cnfa.ncolors;
     }
 

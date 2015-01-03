@@ -21,39 +21,31 @@ package com.basistech.tclre;
  */
 class Cnfa {
     static final int HASLACONS = 1;
-    int nstates;        /* number of states */
-    int ncolors;        /* number of colors */
-    int flags;
-    int pre;        /* setup state number */
-    int post;       /* teardown state number */
-    short[] bos = new short[2];     /* colors, if any, assigned to BOS and BOL */
-    short[] eos = new short[2];     /* colors, if any, assigned to EOS and EOL */
-    long[] arcs;
+    final int ncolors;        /* number of colors */
+    final int flags;
+    final int pre;        /* setup state number */
+    final int post;       /* teardown state number */
+    final short[] bos;     /* colors, if any, assigned to BOS and BOL */
+    final short[] eos;     /* colors, if any, assigned to EOS and EOL */
+    final long[] arcs;
     // each state is an index of an arc.
-    int[] states;
+    final int[] states;
 
 
-    Cnfa(int nstates,
-         int narcs,
-         int preNo,
-         int postNo, short[] bos,
-         short[] eos, int maxcolors, int flags) {
-
-        this.pre = preNo;
-        this.post = postNo;
-        this.nstates = nstates;
+    Cnfa(int ncolors, int flags, int pre, int post, short[] bos, short[] eos, long[] arcs, int[] states) {
+        this.ncolors = ncolors;
+        this.flags = flags;
+        this.pre = pre;
+        this.post = post;
         this.bos = bos;
         this.eos = eos;
-        this.ncolors = maxcolors;
-        this.flags = flags;
-
-        this.arcs = new long[narcs];
-        this.states = new int[nstates];
+        this.arcs = arcs;
+        this.states = states;
     }
 
     void dump() {
         System.out.format("nstates %d\nncolors %d\nflags %x\npre %d\npost %d\nbos [%d, %d]\neos [%d %d]\n",
-            nstates,
+            states.length,
             ncolors,
             flags,
             pre,
@@ -70,14 +62,6 @@ class Cnfa {
         System.out.println();
     }
 
-    void setState(int index, int arcIndex) {
-        states[index] = arcIndex;
-    }
-
-    void setArc(int index, long arcValue) {
-        arcs[index] = arcValue;
-    }
-
     static long packCarc(short color, int targetState) {
         return ((long)color << 32) | targetState;
     }
@@ -90,35 +74,6 @@ class Cnfa {
         return (int)packed;
     }
 
-    /**
-     * carcsort - sort compacted-NFA arcs by color
-     * Really dumb algorithm, but if the list is long enough for that to matter,
-     * you're in real trouble anyway.
-     */
-    void carcsort(int first, int last) {
-        int p;
-        int q;
-        long tmp;
-
-        if (last - first <= 1) {
-            return;
-        }
-
-        for (p = first; p <= last; p++) {
-            for (q = p; q <= last; q++) {
-                short pco = carcColor(arcs[p]);
-                short qco = carcColor(arcs[q]);
-                int pto = carcTarget(arcs[p]);
-                int qto = carcTarget(arcs[q]);
-                if (pco > qco || (pco == qco && pto > qto)) {
-                    assert p != q;
-                    tmp = arcs[p];
-                    arcs[p] = arcs[q];
-                    arcs[q] = tmp;
-                }
-            }
-        }
-    }
 
 
 
