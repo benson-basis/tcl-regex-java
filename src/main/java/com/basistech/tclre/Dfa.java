@@ -37,7 +37,7 @@ class Dfa {
     final int nstates;
     final int ncolors; // length of outarc and inchain vectors (really?)
     final Cnfa cnfa;
-    final ColorMap cm;
+    final RuntimeColorMap cm;
     final Runtime hsreMatcher;
 
     Dfa(Runtime hsreMatcher, Cnfa cnfa) {
@@ -63,7 +63,6 @@ class Dfa {
     StateSet initialize(int start) {
         // Discard state sets; reuse would be faster if we kept them,
         // but then we'd need the real cache.
-        //stateSets.clear();
         stateSets.clear();
         StateSet stateSet = new StateSet(nstates, ncolors);
         stateSet.states.set(cnfa.pre, true);

@@ -23,8 +23,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 
 /**
- * Data structures derived from regguts.h.
- * Note that this is built for 16-bit chars.
+ * The bits and pieces that make up a runnable expression. This is immutable.
  */
 class Guts {
     final int cflags;     /* copy of compile flags */
@@ -33,7 +32,7 @@ class Guts {
     final RuntimeSubexpression tree;
     final Cnfa search;    /* for fast preliminary search */
     final int ntree;
-    final ColorMap cm;
+    final RuntimeColorMap cm;
     final SubstringComparator compare;
 
     private List<RuntimeSubexpression> lookaheadConstraintMachines;
@@ -45,7 +44,8 @@ class Guts {
         this.tree = tree;
         this.search = search;
         this.ntree = ntree;
-        this.cm = cm;
+        // create the sort of color map that we can serialize and share.
+        this.cm = RuntimeColorMap.immutableColorMap(cm);
         this.compare = compare;
         if (lacons != null) {
             lookaheadConstraintMachines = Lists.newArrayList();

@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 /**
  * code from regc_color.c.
  */
-class ColorMap {
+class ColorMap extends RuntimeColorMap {
     static final Logger LOG = LoggerFactory.getLogger(ColorMap.class);
     // this is called 'v' in the C code.
     Compiler compiler; // for compile error reporting
@@ -36,14 +36,13 @@ class ColorMap {
     // colorDescs is 'cd' in the C code.
     List<ColorDesc> colorDescs; // all the color descs. A list for resizability.
     // cdspace replaced by usr of list.
-    Tree[] tree;
 
     ColorMap(Compiler compiler) {
+        super(buildTree(compiler));
         this.compiler = compiler;
 
         free = -1;
         colorDescs = Lists.newArrayList();
-        tree = new Tree[Constants.NBYTS];
 
         // reg_color.c: initcm.
 
@@ -52,12 +51,15 @@ class ColorMap {
         assert colorDescs.size() == 1;
         white.sub = Constants.NOSUB;
         white.setNChars(65536);
+        white.block = tree[Constants.NBYTS - 1];
+    }
 
+    private static Tree[] buildTree(Compiler compiler) {
+        Tree[] tree = new Tree[Constants.NBYTS];
         // allocate top-level array of tree objects.
         for (int tx = 0; tx < tree.length; tx++) {
             tree[tx] = new Tree();
         }
-
         // Make each top-level's collection of next-level pointers point to the next item
         // at the top level.
         for (int tx = 0; tx < tree.length - 1; tx++) {
@@ -73,15 +75,8 @@ class ColorMap {
         for (int i = Constants.BYTTAB - 1; i >= 0; i--) {
             t.ccolor[i] = Constants.WHITE;
         }
-        white.block = t;
-    }
 
-    static short b0(char c) {
-        return (short)(c & Constants.BYTMASK);
-    }
-
-    static short b1(char c) {
-        return (short)((c >>> Constants.BYTBITS) & Constants.BYTMASK);
+        return tree;
     }
 
     /**
@@ -495,12 +490,6 @@ class ColorMap {
                 }
             }
         }
-    }
-
-    short getcolor(char c) {
-        // take the first tree item in the map, then go down two levels.
-        // why the extra level?
-        return tree[0].ptrs[b1(c)].ccolor[b0(c)];
     }
 
     /**
