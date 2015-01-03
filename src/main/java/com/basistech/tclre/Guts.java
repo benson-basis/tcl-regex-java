@@ -27,22 +27,26 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
  * Note that this is built for 16-bit chars.
  */
 class Guts {
-    int cflags;     /* copy of compile flags */
-    long info;      /* copy of re_info */
-    int nsub;       /* copy of re_nsub */
-    RuntimeSubexpression tree;
-    Cnfa search;    /* for fast preliminary search */
-    int ntree;
-    ColorMap cm;
-    SubstringComparator compare;
+    final int cflags;     /* copy of compile flags */
+    final long info;      /* copy of re_info */
+    final int nsub;       /* copy of re_nsub */
+    final RuntimeSubexpression tree;
+    final Cnfa search;    /* for fast preliminary search */
+    final int ntree;
+    final ColorMap cm;
+    final SubstringComparator compare;
 
     private List<RuntimeSubexpression> lookaheadConstraintMachines;
 
-    //TODO: turn this into immutable
-    Guts() {
-    }
-
-    void setupLookaheadConstraints(List<Subre> lacons) {
+    public Guts(int cflags, long info, int nsub, RuntimeSubexpression tree, Cnfa search, int ntree, ColorMap cm, SubstringComparator compare, List<Subre> lacons) {
+        this.cflags = cflags;
+        this.info = info;
+        this.nsub = nsub;
+        this.tree = tree;
+        this.search = search;
+        this.ntree = ntree;
+        this.cm = cm;
+        this.compare = compare;
         if (lacons != null) {
             lookaheadConstraintMachines = Lists.newArrayList();
             for (Subre subre : lacons) {
