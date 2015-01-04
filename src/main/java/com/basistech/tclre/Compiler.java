@@ -16,6 +16,7 @@
 
 package com.basistech.tclre;
 
+import java.io.Serializable;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -261,7 +262,8 @@ final class Compiler {
         return subs;
     }
     
-    static class Comparer implements SubstringComparator {
+    static class Comparer implements SubstringComparator, Serializable {
+        static final long serialVersionUID = 1L;
         private final boolean caseInsensitive;
 
         Comparer(boolean caseInsensitive) {

@@ -16,6 +16,13 @@
 
 package com.basistech.tclre;
 
+import it.unimi.dsi.fastutil.chars.Char2ShortArrayMap;
+import it.unimi.dsi.fastutil.chars.Char2ShortMap;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.lang.reflect.Field;
+
 /**
  * Immutable, sharable, color map.
  * The ColorMap data structure is a fully-populated map from all possible char values to shorts,
@@ -23,7 +30,8 @@ package com.basistech.tclre;
  * This just uses the obvious array of 2^16 shorts. If we wanted to trade space for time,
  * we could use an Short2ShortOpenHashMap instead.
   */
-class RuntimeColorMap {
+class RuntimeColorMap implements Serializable {
+    static final long serialVersionUID = 1L;
     /* A somewhat sparse representation. */
     private final short[] data;
 
@@ -32,7 +40,7 @@ class RuntimeColorMap {
      * @param colorMapTree -- the tree as built in the ColorMap.
      */
     RuntimeColorMap(ColorMap.Tree colorMapTree) {
-        data = new short[0xffff+1];
+        data = new short[Character.MAX_VALUE + 1];
         for (int x = 0; x < 256; x++) {
             if (colorMapTree.ptrs[x] != null) {
                 for (int y = 0; y < 256; y++) {
@@ -50,5 +58,34 @@ class RuntimeColorMap {
      */
     short getcolor(char c) {
         return data[c];
+    }
+
+    /*
+     * Avoid reading and writing 2^16 shorts by turning it into a sparse data structure.
+     */
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+        Char2ShortMap map = new Char2ShortArrayMap();
+        map.defaultReturnValue((short)0);
+        for (int x = 0; x <= Character.MAX_VALUE; x++) {
+            if (data[x] != 0) {
+                map.put((char)x, data[x]);
+            }
+        }
+        out.writeObject(map);
+    }
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+        try {
+            Field dataField = RuntimeColorMap.class.getDeclaredField("data");
+            dataField.setAccessible(true);
+            dataField.set(this, new short[Character.MAX_VALUE + 1]);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        Char2ShortMap map = (Char2ShortMap) in.readObject();
+        for (char c : map.keySet()) {
+            data[c] = map.get(c); // thank goodness that Java doesn't have actual immutable arrays.
+        }
     }
 }

@@ -17,6 +17,7 @@
 package com.basistech.tclre;
 
 
+import java.io.Serializable;
 import java.util.List;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
@@ -25,7 +26,9 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 /**
  * The bits and pieces that make up a runnable expression. This is immutable.
  */
-class Guts {
+class Guts implements Serializable {
+    static final long serialVersionUID = 1L;
+
     final int cflags;     /* copy of compile flags */
     final long info;      /* copy of re_info */
     final int nsub;       /* copy of re_nsub */

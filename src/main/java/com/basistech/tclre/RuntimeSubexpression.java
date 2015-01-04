@@ -17,10 +17,13 @@ package com.basistech.tclre;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 
+import java.io.Serializable;
+
 /**
  * Information needed at runtime for a subexpression.
  */
-final class RuntimeSubexpression {
+final class RuntimeSubexpression implements Serializable {
+    static final long serialVersionUID = 1L;
     final int number;
     final Cnfa machine;
     final char op;

@@ -16,10 +16,13 @@
 
 package com.basistech.tclre;
 
+import java.io.Serializable;
+
 /**
  * Compacted (runtime) NFA.
  */
-class Cnfa {
+class Cnfa implements Serializable {
+    static final long serialVersionUID = 1L;
     static final int HASLACONS = 1;
     final int ncolors;        /* number of colors */
     final int flags;
