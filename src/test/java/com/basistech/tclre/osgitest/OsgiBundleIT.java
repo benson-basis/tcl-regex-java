@@ -22,9 +22,11 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.junit.PaxExamParameterized;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerClass;
 
@@ -33,6 +35,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
@@ -46,9 +50,21 @@ import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 /**
  * Test that the OSGi bundle works.
  */
-@RunWith(PaxExam.class)
+@RunWith(PaxExamParameterized.class)
 @ExamReactorStrategy(PerClass.class)
 public class OsgiBundleIT extends Utils {
+
+    @Parameterized.Parameters
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][]{
+                {Boolean.FALSE}, {Boolean.TRUE}
+        });
+    }
+
+    public OsgiBundleIT(Boolean b) {
+        //
+    }
+
 
     private String getDependencyVersion(String groupId, String artifactId) {
         URL depPropsUrl = Resources.getResource("META-INF/maven/dependencies.properties");
