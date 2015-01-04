@@ -45,7 +45,7 @@ class Guts {
         this.search = search;
         this.ntree = ntree;
         // create the sort of color map that we can serialize and share.
-        this.cm = RuntimeColorMap.immutableColorMap(cm);
+        this.cm = new RuntimeColorMap(cm.tree[0]);
         this.compare = compare;
         if (lacons != null) {
             lookaheadConstraintMachines = Lists.newArrayList();

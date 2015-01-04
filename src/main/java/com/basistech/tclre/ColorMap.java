@@ -26,19 +26,16 @@ import org.slf4j.LoggerFactory;
 /**
  * code from regc_color.c.
  */
-class ColorMap extends RuntimeColorMap {
+class ColorMap {
     static final Logger LOG = LoggerFactory.getLogger(ColorMap.class);
+    final Tree[] tree;
     // this is called 'v' in the C code.
     Compiler compiler; // for compile error reporting
-    // replaced by the use of a list.
-    //int ncds; // number of ColorDesc's
     int free; // beginning of free chain (if non-zero)
-    // colorDescs is 'cd' in the C code.
     List<ColorDesc> colorDescs; // all the color descs. A list for resizability.
-    // cdspace replaced by usr of list.
 
     ColorMap(Compiler compiler) {
-        super(buildTree(compiler));
+        tree = buildTree();
         this.compiler = compiler;
 
         free = -1;
@@ -54,7 +51,7 @@ class ColorMap extends RuntimeColorMap {
         white.block = tree[Constants.NBYTS - 1];
     }
 
-    private static Tree[] buildTree(Compiler compiler) {
+    private static Tree[] buildTree() {
         Tree[] tree = new Tree[Constants.NBYTS];
         // allocate top-level array of tree objects.
         for (int tx = 0; tx < tree.length; tx++) {
@@ -77,6 +74,25 @@ class ColorMap extends RuntimeColorMap {
         }
 
         return tree;
+    }
+
+    static short b0(char c) {
+        return (short)(c & Constants.BYTMASK);
+    }
+
+    static short b1(char c) {
+        return (short)((c >>> Constants.BYTBITS) & Constants.BYTMASK);
+    }
+
+    /**
+     * Retrieve the color for a character.
+     * @param c input char.
+     * @return output color.
+     */
+    short getcolor(char c) {
+        // take the first tree item in the map, then go down two levels.
+        // why the extra level?
+        return tree[0].ptrs[b1(c)].ccolor[b0(c)];
     }
 
     /**

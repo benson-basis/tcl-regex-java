@@ -16,59 +16,38 @@
 
 package com.basistech.tclre;
 
-import java.util.Arrays;
-
 /**
  * Immutable, sharable, color map.
- * This does not have a separate implementation of Tree, so that this can serve as the
- * base class for ColorMap. Instead, {@link #immutableColorMap(ColorMap)}
- * creates a copy.
+ * The ColorMap data structure is a fully-populated map from all possible char values to shorts,
+ * so this just uses the obvious array of 2^16 shorts. If we wanted to trade space for time,
+ * we could use an Short2ShortOpenHashMap instead.
   */
 class RuntimeColorMap {
-    protected final ColorMap.Tree[] tree;
+    /* A somewhat sparse representation. */
+    private final short[] data;
 
     /**
      * Construct over a tree. It is the caller's responsibility to make an immutable copy.
-     * @param tree
+     * @param colorMapTree -- the tree as built in the ColorMap.
      */
-    RuntimeColorMap(ColorMap.Tree[] tree) {
-        this.tree = tree;
-    }
-
-    static short b0(char c) {
-        return (short)(c & Constants.BYTMASK);
-    }
-
-    static short b1(char c) {
-        return (short)((c >>> Constants.BYTBITS) & Constants.BYTMASK);
-    }
-
-    short getcolor(char c) {
-        // take the first tree item in the map, then go down two levels.
-        // why the extra level?
-        return tree[0].ptrs[b1(c)].ccolor[b0(c)];
-    }
-
-    static RuntimeColorMap immutableColorMap(ColorMap cm) {
-        ColorMap.Tree[] t = new ColorMap.Tree[cm.tree.length];
-        for (int x = 0; x < cm.tree.length; x++) {
-            t[x] = copyTree(cm.tree[x]);
-        }
-        return new RuntimeColorMap(t);
-    }
-
-    private static ColorMap.Tree copyTree(ColorMap.Tree tree) {
-        if (tree == null) {
-            return null;
-        }
-        ColorMap.Tree t = new ColorMap.Tree();
-        t.ccolor = Arrays.copyOf(tree.ccolor, tree.ccolor.length);
-        t.ptrs = new ColorMap.Tree[tree.ptrs.length];
-        for (int x = 0; x < t.ptrs.length; x++) {
-            if (tree.ptrs[x] != null) {
-                t.ptrs[x] = copyTree(tree.ptrs[x]);
+    RuntimeColorMap(ColorMap.Tree colorMapTree) {
+        data = new short[0xffff+1];
+        for (int x = 0; x < 256; x++) {
+            if (colorMapTree.ptrs[x] != null) {
+                for (int y = 0; y < 256; y++) {
+                    int index = (x * 256) + y;
+                    data[index] = colorMapTree.ptrs[x].ccolor[y];
+                }
             }
         }
-        return t;
+    }
+
+    /**
+     * Retrieve the color for a character.
+     * @param c
+     * @return
+     */
+    short getcolor(char c) {
+        return data[c];
     }
 }
