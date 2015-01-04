@@ -19,7 +19,8 @@ package com.basistech.tclre;
 /**
  * Immutable, sharable, color map.
  * The ColorMap data structure is a fully-populated map from all possible char values to shorts,
- * so this just uses the obvious array of 2^16 shorts. If we wanted to trade space for time,
+ * represented in a complex way.
+ * This just uses the obvious array of 2^16 shorts. If we wanted to trade space for time,
  * we could use an Short2ShortOpenHashMap instead.
   */
 class RuntimeColorMap {

@@ -24,7 +24,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Manage the assignment of colors for characters. Arcs are labelled with colors, which group characters.
  * code from regc_color.c.
+ * TODO: is all the complex management of the tree really worthwhile? When the dust settles, tree[0] is a non-sparse map from all possible char values
+ * TODO: to colors. Could it be represented as simple short[] all along?
  */
 class ColorMap {
     static final Logger LOG = LoggerFactory.getLogger(ColorMap.class);
@@ -591,7 +594,7 @@ class ColorMap {
             t = tree[0].ptrs[i];
             if (t == null) {
                 // this might not be an error, it was just a debug message in c.
-                throw new RuntimeException("null in filled tree");
+                throw new RuntimeException("null in filled color tree");
             } else if (t == fillt) {
                 // do nothing
             } else if (level < Constants.NBYTS - 2) /* more pointer blocks below */ {
@@ -618,8 +621,8 @@ class ColorMap {
     /**
      * Color tree
      */
-    /* C unions this. We use more memory instead, and trust that clever punning of pointers and shorts is not
-     * happening.
+    /* C unions this. We use more memory instead. See TODO
+     comments at top of file as to whether this all makes sense.
      */
     static class Tree {
         short[] ccolor = new short[Constants.BYTTAB];
